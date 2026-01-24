@@ -12,7 +12,6 @@ import UIKit
 import FirebaseCore
 import FirebaseFirestore
 import FirebaseAuth
-      
 
 class RegisterViewController: UIViewController {
 
