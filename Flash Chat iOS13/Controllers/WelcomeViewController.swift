@@ -21,10 +21,6 @@ class WelcomeViewController: UIViewController {
         
         for letter in titleText {
             
-            print("-")
-            print(0.1 * charIndex)
-            print(letter)
-
             Timer.scheduledTimer(withTimeInterval: 0.1 * charIndex, repeats: false) { timer in
                 
                 self.titleLabel.text?.append(letter)
