@@ -35,7 +35,7 @@ class LoginViewController: UIViewController {
                     print("Successful Login")
 
                     // Navigate to the ChatViewController
-                    self.performSegue(withIdentifier: "LoginToChat", sender: self)
+                    self.performSegue(withIdentifier: K.loginSegue, sender: self)
 
                 }
                 
