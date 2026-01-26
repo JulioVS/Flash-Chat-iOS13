@@ -19,11 +19,11 @@ class ChatViewController: UIViewController {
     @IBOutlet weak var messageTextfield: UITextField!
     
     var messages: [Message] = [
-
+        
         Message(sender: "mymail1@mydom.com", body: "Hey!"),
         Message(sender: "mymail2@mydom.com", body: "You!"),
-        Message(sender: "mymail3@mydom.com", body: "Out there in the cold!")
-
+        Message(sender: "mymail3@mydom.com", body: "Out there in the cold, feeling lonely, feeling old, can you hear me? Together we stand, divided we fall...we fall...we fall...")
+        
     ]
     
     override func viewDidLoad() {
@@ -32,9 +32,10 @@ class ChatViewController: UIViewController {
         
         title = K.appName
         navigationItem.hidesBackButton = true
-
+        
         tableView.dataSource = self
-
+        tableView.register(UINib(nibName: K.cellNibName, bundle: nil), forCellReuseIdentifier: K.cellIdentifier)
+        
     }
     
     @IBAction func sendPressed(_ sender: UIButton) {
@@ -42,7 +43,7 @@ class ChatViewController: UIViewController {
     }
     
     @IBAction func logOutPressed(_ sender: UIBarButtonItem) {
-                
+        
         do {
             
             try Auth.auth().signOut()
@@ -71,8 +72,8 @@ extension ChatViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: K.cellIdentifier, for: indexPath)
-        cell.textLabel?.text = messages[indexPath.row].body
+        let cell = tableView.dequeueReusableCell(withIdentifier: K.cellIdentifier, for: indexPath) as! MessageCell
+        cell.label.text = messages[indexPath.row].body
         
         return cell
         
