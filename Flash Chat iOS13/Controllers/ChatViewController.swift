@@ -23,9 +23,9 @@ class ChatViewController: UIViewController {
     
     var messages: [Message] = [
         
-        Message(sender: "mymail1@mydom.com", body: "Hey!"),
-        Message(sender: "mymail2@mydom.com", body: "You!"),
-        Message(sender: "mymail3@mydom.com", body: "Out there in the cold, feeling lonely, feeling old, can you hear me? Together we stand, divided we fall...we fall...we fall...")
+        Message(sender: "mymail@mydom.com", body: "My first message"),
+        Message(sender: "mymail@mydom.com", body: "My second message"),
+        Message(sender: "mymail@mydom.com", body: "My very long multi-line third message in order to test the wrapping function of the label UI element")
         
     ]
     
@@ -39,6 +39,48 @@ class ChatViewController: UIViewController {
         tableView.dataSource = self
         tableView.register(UINib(nibName: K.cellNibName, bundle: nil), forCellReuseIdentifier: K.cellIdentifier)
         
+        loadMessages()
+        
+    }
+    
+    func loadMessages() {
+        
+        // messages = []
+        
+        db.collection(K.FStore.collectionName).getDocuments { (querySnapshot, error) in
+            
+            if let e = error {
+                
+                print("There was an issue retrieving data from Firestore: \(e)")
+                
+            }
+            else {
+            
+                if let snapshotDocuments = querySnapshot?.documents {
+                    
+                    for doc in snapshotDocuments {
+                                                
+                        let data = doc.data()
+                        print(data)
+                        
+                        if let messageSender = data[K.FStore.senderField] as? String, let messageBody = data[K.FStore.bodyField] as? String {
+                            
+                            let newMessage = Message(sender: messageSender, body: messageBody)
+                            self.messages.append(newMessage)
+                            
+                            DispatchQueue.main.async {
+                                self.tableView.reloadData()
+                            }
+                            
+                        }
+                        
+                    }
+                    
+                }
+                
+            }
+            
+        }
     }
     
     @IBAction func sendPressed(_ sender: UIButton) {
