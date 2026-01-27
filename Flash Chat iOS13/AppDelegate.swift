@@ -23,6 +23,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Add Firebase configuration
         FirebaseApp.configure()
         
+        // My Firestore Database
+        let db = Firestore.firestore()
+        print(db)
+        
         return true
     }
 
