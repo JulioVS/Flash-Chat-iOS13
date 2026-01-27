@@ -21,13 +21,7 @@ class ChatViewController: UIViewController {
     // My Firestore Database
     let db = Firestore.firestore()
     
-    var messages: [Message] = [
-        
-        Message(sender: "mymail@mydom.com", body: "My first message"),
-        Message(sender: "mymail@mydom.com", body: "My second message"),
-        Message(sender: "mymail@mydom.com", body: "My very long multi-line third message in order to test the wrapping function of the label UI element")
-        
-    ]
+    var messages: [Message] = []
     
     override func viewDidLoad() {
         
@@ -48,30 +42,33 @@ class ChatViewController: UIViewController {
         db.collection(K.FStore.collectionName)
             .order(by: K.FStore.dateField)
             .addSnapshotListener { (querySnapshot, error) in
-
-            self.messages = []
-            
-            if let e = error {
                 
-                print("There was an issue retrieving data from Firestore: \(e)")
+                self.messages = []
                 
-            }
-            else {
-            
-                if let snapshotDocuments = querySnapshot?.documents {
+                if let e = error {
                     
-                    for doc in snapshotDocuments {
-                                                
-                        let data = doc.data()
-                        print(data)
+                    print("There was an issue retrieving data from Firestore: \(e)")
+                    
+                }
+                else {
+                    
+                    if let snapshotDocuments = querySnapshot?.documents {
                         
-                        if let messageSender = data[K.FStore.senderField] as? String, let messageBody = data[K.FStore.bodyField] as? String {
+                        for doc in snapshotDocuments {
                             
-                            let newMessage = Message(sender: messageSender, body: messageBody)
-                            self.messages.append(newMessage)
+                            let data = doc.data()
+                            print(data)
                             
-                            DispatchQueue.main.async {
+                            if let messageSender = data[K.FStore.senderField] as? String, let messageBody = data[K.FStore.bodyField] as? String {
+                                
+                                let newMessage = Message(sender: messageSender, body: messageBody)
+                                self.messages.append(newMessage)
+                                
+                                let indexPath = IndexPath(row: self.messages.count - 1, section: 0)
+                                
                                 self.tableView.reloadData()
+                                self.tableView.scrollToRow(at: indexPath, at: .top, animated: true)
+                                
                             }
                             
                         }
@@ -81,8 +78,6 @@ class ChatViewController: UIViewController {
                 }
                 
             }
-            
-        }
     }
     
     @IBAction func sendPressed(_ sender: UIButton) {
@@ -92,10 +87,10 @@ class ChatViewController: UIViewController {
             if messageBody == "" {
                 return
             }
-
+            
             print(messageSender)
             print(messageBody)
-
+            
             db.collection(K.FStore.collectionName).addDocument(data: [
                 
                 K.FStore.senderField: messageSender,
@@ -112,6 +107,7 @@ class ChatViewController: UIViewController {
                 else {
                     
                     print("Successfully saved data!")
+                    self.messageTextfield.text = ""
                     
                 }
                 
@@ -151,8 +147,31 @@ extension ChatViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
+        let message = messages[indexPath.row]
+        
         let cell = tableView.dequeueReusableCell(withIdentifier: K.cellIdentifier, for: indexPath) as! MessageCell
-        cell.label.text = messages[indexPath.row].body
+        cell.label.text = message.body
+        
+        // This is a message from the current user
+        if message.sender == Auth.auth().currentUser?.email {
+            
+            cell.leftImageView.isHidden = true
+            cell.rightImageView.isHidden = false
+            
+            cell.messageBubble.backgroundColor = UIColor(named: K.BrandColors.lightPurple)
+            cell.label.textColor = UIColor(named: K.BrandColors.purple)
+            
+        }
+        // This is a message from another sender
+        else {
+            
+            cell.leftImageView.isHidden = false
+            cell.rightImageView.isHidden = true
+            
+            cell.messageBubble.backgroundColor = UIColor(named: K.BrandColors.purple)
+            cell.label.textColor = UIColor(named: K.BrandColors.lightPurple)
+            
+        }
         
         return cell
         
