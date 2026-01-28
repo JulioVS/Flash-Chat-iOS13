@@ -57,7 +57,6 @@ class ChatViewController: UIViewController {
                         for doc in snapshotDocuments {
                             
                             let data = doc.data()
-                            print(data)
                             
                             if let messageSender = data[K.FStore.senderField] as? String, let messageBody = data[K.FStore.bodyField] as? String {
                                 

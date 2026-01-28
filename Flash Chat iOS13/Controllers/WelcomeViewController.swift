@@ -14,6 +14,9 @@ class WelcomeViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
 
+        // Application Lifecycle Lesson
+        print(#function)
+        
         super.viewWillAppear(animated)
         navigationController?.isNavigationBarHidden = true
 
@@ -21,12 +24,18 @@ class WelcomeViewController: UIViewController {
 
     override func viewWillDisappear(_ animated: Bool) {
 
+        // Application Lifecycle Lesson
+        print(#function)
+        
         super.viewWillDisappear(animated)
         navigationController?.isNavigationBarHidden = false
 
     }
 
     override func viewDidLoad() {
+        
+        // Application Lifecycle Lesson
+        print(#function)
         
         super.viewDidLoad()
 
